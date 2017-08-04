@@ -26,13 +26,18 @@ class GraphQLMiddleware implements \Interop\Http\ServerMiddleware\MiddlewareInte
      * @var array Allowed method for a graphql request, default GET, POST
      */
     private $allowed_methods = [
-        "GET", "POST"
+        "GET", "POST", "OPTIONS"
     ];
 
     /**
      * @var Processor
      */
     private $schema;
+    
+    /**
+     * @var string The allowed origins for CORS requests
+     */
+    private $allowedOrigins;
 
     /**
      * GraphQLMiddleware constructor.
@@ -40,10 +45,11 @@ class GraphQLMiddleware implements \Interop\Http\ServerMiddleware\MiddlewareInte
      * @param AbstractSchema    $schema
      * @param string    $graphqlUri
      */
-    public function __construct(AbstractSchema $schema, $graphqlUri = '/graphql', $rootUrl = null)
+    public function __construct(AbstractSchema $schema, $graphqlUri = '/graphql', $rootUrl = null, $allowedOrigins = '')
     {
         $this->schema = $schema;
         $this->graphqlUri = rtrim($rootUrl, '/').'/'. ltrim($graphqlUri, '/');
+        $this->allowedOrigins = $allowedOrigins;
     }
 
     /**
@@ -67,7 +73,15 @@ class GraphQLMiddleware implements \Interop\Http\ServerMiddleware\MiddlewareInte
             ], 405);
         }
 
-        list($query, $variables) = $this->getPayload($request);
+        if($request->getMethod() == "OPTIONS"){ // CORS graphQL fetch Requests
+            return new JsonResponse("OK", 200, [
+                "Access-Control-Allow-Origin" => $this->allowedOrigins,
+                "Access-Control-Allow-Headers" => "Content-Type, Authorization, Content-Length, X-Requested-With",
+                "Access-Control-Allow-Method" => "GET, POST"
+            ]);
+        } else {
+            list($query, $variables) = $this->getPayload($request);
+        }
 
 
         $processor = new Processor($this->schema);
