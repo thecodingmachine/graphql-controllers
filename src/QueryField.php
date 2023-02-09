@@ -3,7 +3,6 @@
 
 namespace TheCodingMachine\GraphQL\Controllers;
 
-use TheCodingMachine\GraphQL\Controllers\Registry\Registry;
 use Youshido\GraphQL\Execution\ResolveInfo;
 use Youshido\GraphQL\Field\AbstractField;
 use Youshido\GraphQL\Type\AbstractType;

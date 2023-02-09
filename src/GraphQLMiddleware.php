@@ -3,7 +3,6 @@ namespace TheCodingMachine\GraphQL\Controllers;
 
 use GraphQL\GraphQL;
 use Youshido\GraphQL\Schema\AbstractSchema;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Youshido\GraphQL\Execution\Processor;
 use Zend\Diactoros\Response\JsonResponse;
